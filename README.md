@@ -151,6 +151,6 @@ Gesla, ključi (SSH, podpisni ključ za Android), naslov mojega Tailscale omrež
 
 **David Planinšek** · junior data engineer → analytics engineering
 
-*Ta projekt rad pokažem v živo — na razgovoru odprem aplikacijo na telefonu.*
+
 
 </div>
