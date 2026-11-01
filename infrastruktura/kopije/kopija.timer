@@ -1,0 +1,8 @@
+[Unit]
+Description=Vsako noč ob 02:30
+[Timer]
+OnCalendar=*-*-* 02:30
+Persistent=true
+RandomizedDelaySec=10min
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Life OS tedensko poročilo vsako nedeljo ob 19:00
+
+[Timer]
+OnCalendar=Sun *-*-* 19:00
+Persistent=true
+Unit=lifeos-porocilo.service
+
+[Install]
+WantedBy=timers.target

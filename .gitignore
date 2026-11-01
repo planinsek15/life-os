@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.claude/
+*.log
+*.jks
+*.keystore
+*.apk
+*.img
+*.tar.gz
+__pycache__/
+*.bak*
+.env*

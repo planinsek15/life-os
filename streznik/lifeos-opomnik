@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Opomniki Life OS na iPhone (ntfy prek /usr/local/bin/obvesti).
+
+lifeos-opomnik vecer     21:30: kaj je danes še odprto / nevpisano
+lifeos-opomnik zapadle   16:00: naloge z rokom danes ali prej, ki niso opravljene
+lifeos-opomnik test      pošlje poskusno obvestilo
+
+Podatke bere prek API-ja (http://127.0.0.1:8090/api/data), zato ne rabi dostopa do datotek.
+"""
+import json
+import subprocess
+import sys
+import urllib.request
+from datetime import date
+
+API = "http://127.0.0.1:8090/api/data"
+
+
+def obvesti(naslov, besedilo, prio="3", oznake=""):
+    subprocess.run(["/usr/local/bin/obvesti", naslov, besedilo, prio, oznake], check=False)
+
+
+def podatki():
+    with urllib.request.urlopen(API, timeout=10) as r:
+        return json.load(r).get("data") or {}
+
+
+def danes_naloge(d, danes):
+    # Enako pravilo kot nadzorna plošča: rok danes, ali ustvarjena danes brez roka.
+    out = []
+    for t in d.get("todos", []):
+        due = t.get("dueDate")
+        if (due == danes) or (not due and (t.get("createdAt") or "")[:10] == danes):
+            out.append(t)
+    return out
+
+
+def vecer(d):
+    danes = date.today().isoformat()
+    naloge = danes_naloge(d, danes)
+    odprte = [t for t in naloge if not t.get("completed")]
+    vrstice = []
+    if naloge:
+        vrstice.append(f"Naloge: {len(naloge) - len(odprte)}/{len(naloge)} opravljenih")
+        for t in odprte[:3]:
+            vrstice.append(f"• {t.get('text', '')}")
+    manjka = []
+    if not any(s.get("date") == danes for s in d.get("sleep", [])):
+        manjka.append("spanje")
+    if not any((w.get("date") or "")[:10] == danes for w in d.get("workouts", [])):
+        manjka.append("vadba")
+    if not any(j.get("date") == danes for j in d.get("journal", [])):
+        manjka.append("dnevnik (1 vrstica)")
+    if manjka:
+        vrstice.append("Še ni vpisano: " + ", ".join(manjka))
+    if not vrstice:
+        return
+    obvesti("Life OS: večerni pregled", "\n".join(vrstice), "3", "crescent_moon")
+
+
+def zapadle(d):
+    danes = date.today().isoformat()
+    z = [t for t in d.get("todos", []) if not t.get("completed") and t.get("dueDate") and t["dueDate"] <= danes]
+    if not z:
+        return
+    z.sort(key=lambda t: t["dueDate"])
+    vrstice = [f"• {t.get('text', '')}" + ("" if t["dueDate"] == danes else f" (rok {t['dueDate']})") for t in z[:5]]
+    if len(z) > 5:
+        vrstice.append(f"… in še {len(z) - 5}")
+    obvesti(f"Life OS: {len(z)} nalog z rokom", "\n".join(vrstice), "4", "alarm_clock")
+
+
+def main():
+    ukaz = sys.argv[1] if len(sys.argv) > 1 else ""
+    if ukaz == "test":
+        return obvesti("Life OS", "Poskusno obvestilo: opomniki delujejo.", "3", "white_check_mark")
+    d = podatki()
+    if ukaz == "vecer":
+        vecer(d)
+    elif ukaz == "zapadle":
+        zapadle(d)
+    else:
+        sys.exit(__doc__)
+
+
+if __name__ == "__main__":
+    main()

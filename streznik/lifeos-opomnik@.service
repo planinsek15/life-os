@@ -1,0 +1,12 @@
+[Unit]
+Description=Life OS opomnik (%i)
+After=lifeos.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/lifeos-opomnik %i
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

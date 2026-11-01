@@ -1,0 +1,6 @@
+[Unit]
+Description=Zaznavanje novih naprav v domačem omrežju
+After=network-online.target docker.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nove-naprave

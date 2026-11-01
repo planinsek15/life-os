@@ -1,0 +1,14 @@
+[DEFAULT]
+backend   = systemd
+banaction = nftables-multiport
+banaction_allports = nftables-allports
+bantime   = 1h
+bantime.increment = true
+findtime  = 10m
+maxretry  = 3
+action    = %(action_)s
+            ntfy
+ignoreip  = 127.0.0.1/8 ::1
+
+[sshd]
+enabled = true

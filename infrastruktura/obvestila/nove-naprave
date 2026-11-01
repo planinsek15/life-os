@@ -1,0 +1,12 @@
+#!/bin/sh
+# Vsakih 5 min: poišče naprave v domačem omrežju in javi tiste, ki jih še ni videl.
+ZNANE=/var/lib/nove-naprave/znane.txt
+mkdir -p /var/lib/nove-naprave; touch "$ZNANE"
+arp-scan -q -x -I eno1 --localnet 2>/dev/null | awk '{print tolower($2), $1}' | sort -u | while read mac ip; do
+  [ -n "$mac" ] || continue
+  if ! grep -qi "^$mac" "$ZNANE"; then
+    echo "$mac $ip $(date +%F)" >> "$ZNANE"
+    proiz=$(grep -i "^$(echo $mac | tr -d : | cut -c1-6 | tr a-f A-F)" /usr/share/arp-scan/ieee-oui.txt | cut -f2-)
+    /usr/local/bin/obvesti "Nova naprava v omrežju" "IP $ip, MAC $mac${proiz:+ ($proiz)}. Če je ne poznaš, mi povej." 4 rotating_light
+  fi
+done

@@ -1,0 +1,8 @@
+[Unit]
+Description=Nočna šifrirana varnostna kopija (restic)
+After=network-online.target docker.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kopija
+Nice=10
+IOSchedulingClass=idle

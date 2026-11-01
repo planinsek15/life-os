@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0e0e12">
+<title>Life OS — tablica</title>
+<link rel="stylesheet" href="/tablica.css">
+</head>
+<body>
+<!-- Lahka stran za staro tablico (Android 4.0): brez Reacta, samo ES5 in navaden CSS.
+     Podatki so isti kot v aplikaciji (GET/PUT /api/data na strežniku doma). -->
+<div id="glava">
+  <div class="celica">
+    <div id="pozdrav"></div>
+    <div id="ura">--:--</div>
+    <div id="datum"></div>
+  </div>
+  <div class="celica desno">
+    <div class="oznaka">DANES</div>
+    <div id="odstotek">0%</div>
+    <div class="vrstica"><div id="vrstica-polna"></div></div>
+    <div id="povzetek"></div>
+  </div>
+</div>
+
+<div id="zavihki">
+  <a href="#" id="z-danes" class="zavihek izbran">Danes</a>
+  <a href="#" id="z-cilji" class="zavihek">Cilji</a>
+  <span id="stanje"></span>
+</div>
+
+<div id="stran-danes" class="stran">
+  <div id="pregled"></div>
+  <form id="dodaj" class="dodaj" action="#">
+    <input id="dodaj-besedilo" type="text" placeholder="Novo opravilo za danes …" autocomplete="off">
+    <span class="gumb-celica"><button type="submit">Dodaj</button></span>
+  </form>
+  <div id="seznam-danes"></div>
+</div>
+
+<div id="stran-cilji" class="stran skrita">
+  <div id="seznam-cilji"></div>
+</div>
+
+<script src="/tablica.js"></script>
+</body>
+</html>

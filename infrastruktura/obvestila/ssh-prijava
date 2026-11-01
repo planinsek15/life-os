@@ -1,0 +1,8 @@
+#!/bin/sh
+# PAM (pam_exec): obvestilo ob SSH prijavi. Prijave z namiznega (Claude) se samo zapišejo v dnevnik.
+[ "$PAM_TYPE" = "open_session" ] || exit 0
+case "$PAM_RHOST" in
+  192.168.1.30|100.x.y.z) logger -t ssh-prijava "namizni: $PAM_USER z $PAM_RHOST"; exit 0 ;;
+esac
+/usr/local/bin/obvesti "SSH prijava na strežnik" "Uporabnik $PAM_USER se je prijavil z $PAM_RHOST ob $(date '+%d.%m. %H:%M')." 4 warning &
+exit 0

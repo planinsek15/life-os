@@ -1,0 +1,4 @@
+#!/bin/sh
+# obvesti "Naslov" "Besedilo" [prioriteta 1-5] [oznake]  -> ntfy tema $NTFY_TEMA
+T="${1:-Strežnik doma}"; M="${2:-}"; P="${3:-3}"; G="${4:-}"
+curl -fsS -m 10 -H "Title: $T" -H "Priority: $P" ${G:+-H "Tags: $G"} -d "$M" http://127.0.0.1:8080/${NTFY_TEMA:-moja-tema} >/dev/null 2>&1 || logger -t obvesti "ntfy ni dosegljiv: $T - $M"

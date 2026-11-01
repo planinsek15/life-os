@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+"""Tedensko Claude poročilo za Life OS.
+
+Vsako nedeljo (timer) prebere podatke prek API-ja, izračuna številke za ta in
+prejšnji teden, jih da Claudu (claude -p, brez orodij, tvoja naročnina) in
+poročilo shrani v data.reports, da ga aplikacija pokaže v zavihku Teden.
+
+lifeos-porocilo           pripravi poročilo za tekoči teden (pon-ned)
+lifeos-porocilo --suho    samo izpiše številke in poziv, nič ne shrani
+"""
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+import uuid
+from datetime import date, datetime, timedelta
+
+API = "http://127.0.0.1:8090/api/data"
+CLAUDE = os.path.expanduser("~/.local/bin/claude")
+
+
+def get():
+    with urllib.request.urlopen(API, timeout=10) as r:
+        return json.load(r)
+
+
+def put(version, data):
+    req = urllib.request.Request(API, method="PUT", headers={"Content-Type": "application/json"},
+                                 data=json.dumps({"version": version, "data": data}).encode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        return e.code
+
+
+def obvesti(naslov, besedilo, prio="3", oznake=""):
+    subprocess.run(["/usr/local/bin/obvesti", naslov, besedilo, prio, oznake], check=False)
+
+
+def in_week(day, start, end):
+    return bool(day) and start.isoformat() <= day[:10] <= end.isoformat()
+
+
+def stats(d, start, end):
+    """Številke za en teden (start = ponedeljek, end = nedelja)."""
+    todos = [t for t in d.get("todos", []) if in_week(t.get("dueDate") or t.get("createdAt"), start, end)]
+    wk = [w for w in d.get("workouts", []) if in_week(w.get("date"), start, end)]
+    sl = [s for s in d.get("sleep", []) if in_week(s.get("date"), start, end)]
+    jr = [j for j in d.get("journal", []) if in_week(j.get("date"), start, end)]
+    he = [h for h in d.get("health", []) if in_week(h.get("date"), start, end)]
+    attempts = [a for g in d.get("goals", []) for a in (g.get("attempts") or []) if in_week(a.get("at"), start, end)]
+    avg = lambda xs: round(sum(xs) / len(xs), 1) if xs else None
+    return {
+        "naloge_opravljene": sum(1 for t in todos if t.get("completed")),
+        "naloge_vse": len(todos),
+        "vadbe": len(wk),
+        "vadba_minute": sum(w.get("duration") or 0 for w in wk),
+        "spanje_povprecje_ur": avg([s.get("hours") or 0 for s in sl]),
+        "spanje_vpisanih_dni": len(sl),
+        "dnevnik_dni": len(jr),
+        "dnevnik_pocutje_1_5": avg([j.get("mood") or 0 for j in jr]),
+        "pocutje_1_10": avg([h.get("mood") for h in he if h.get("mood")]),
+        "energija_1_10": avg([h.get("energy") for h in he if h.get("energy")]),
+        "koraki_povprecje": avg([h.get("steps") for h in he if h.get("steps")]),
+        "poskusi_ciljev": len(attempts),
+    }
+
+
+SYSTEM = """Si Davidov osebni mentor za tedenski pregled. David je 25-letni data engineer iz Slovenije.
+Najbolje izvede, ko ima jasen rok in posledico; nagiba se k začenjanju preveč stvari hkrati.
+Piši slovensko, na ti, kratko in neposredno, brez laskanja in brez praznih fraz.
+Primerjaj s prejšnjim tednom s konkretnimi številkami. Če podatkov manjka, to povej in predlagaj najmanjši korak (npr. ena vrstica v dnevnik na dan).
+Vrni SAMO JSON brez dodatnega besedila, v obliki:
+{"ocena": <1-10>, "boljse_kot_prej": <true|false|null>, "povzetek": "<2 stavka>",
+ "dobro": ["<do 3 točke>"], "izboljsaj": ["<do 3 točke>"], "fokus": "<ena konkretna stvar za naslednji teden z rokom>"}"""
+
+
+def main():
+    suho = "--suho" in sys.argv
+    today = date.today()
+    start = today - timedelta(days=today.weekday())
+    end = start + timedelta(days=6)
+    prev_start, prev_end = start - timedelta(days=7), start - timedelta(days=1)
+    week_id = f"{start.isocalendar()[0]}-W{start.isocalendar()[1]:02d}"
+
+    doc = get()
+    d = doc.get("data") or {}
+    reports = d.get("reports") or []
+    prev = next((r for r in sorted(reports, key=lambda r: r.get("week", ""), reverse=True) if r.get("week") != week_id), None)
+
+    now, before = stats(d, start, end), stats(d, prev_start, prev_end)
+    goals = [{"cilj": g.get("title"), "poskusi": g.get("failCount"), "od": g.get("failTarget")}
+             for g in d.get("goals", []) if not g.get("completed")]
+    journal = [f"{j['date']} ({j.get('mood')}/5): {j.get('line', '')}"
+               for j in sorted(d.get("journal", []), key=lambda j: j.get("date", "")) if in_week(j.get("date"), start, end)]
+    prompt = json.dumps({
+        "teden": f"{start.isoformat()} do {end.isoformat()}",
+        "ta_teden": now, "prejsnji_teden": before,
+        "aktivni_cilji": goals,
+        "dnevnik_ta_teden": journal,
+        "prejsnji_fokus": prev.get("fokus") if prev else None,
+        "prejsnja_ocena": prev.get("ocena") if prev else None,
+    }, ensure_ascii=False, indent=1)
+
+    if suho:
+        print(prompt)
+        return
+
+    try:
+        out = subprocess.run(
+            [CLAUDE, "-p", "--tools", "", "--no-session-persistence", "--output-format", "json",
+             "--system-prompt", SYSTEM],
+            input=prompt, capture_output=True, text=True, timeout=600, cwd=os.path.expanduser("~"))
+        result = json.loads(out.stdout)["result"]
+        body = json.loads(result[result.index("{"):result.rindex("}") + 1])
+    except Exception as e:  # noqa: BLE001 — any failure ends in one notification
+        err = (locals().get("out").stderr[-300:] if locals().get("out") else str(e))
+        obvesti("NAPAKA: tedensko poročilo", f"Claude ni vrnil poročila: {err}", "4", "x")
+        sys.exit(1)
+
+    report = {
+        "id": str(uuid.uuid4()), "week": week_id, "from": start.isoformat(), "to": end.isoformat(),
+        "createdAt": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "ocena": body.get("ocena"), "boljse": body.get("boljse_kot_prej"),
+        "povzetek": body.get("povzetek", ""), "dobro": body.get("dobro") or [],
+        "izboljsaj": body.get("izboljsaj") or [], "fokus": body.get("fokus", ""),
+        "stats": now,
+    }
+
+    # Shrani: zamenja poročilo za isti teden; ob 409 (nekdo je vmes shranil) poskusi znova.
+    for _ in range(5):
+        doc = get()
+        d = doc.get("data") or {}
+        d["reports"] = [r for r in (d.get("reports") or []) if r.get("week") != week_id] + [report]
+        if put(doc["version"], d) == 200:
+            break
+        time.sleep(2)
+    else:
+        obvesti("NAPAKA: tedensko poročilo", "Poročila ni bilo mogoče shraniti.", "4", "x")
+        sys.exit(1)
+
+    obvesti(f"Tedenski pregled: {report['ocena']}/10", f"{report['povzetek']}\nFokus: {report['fokus']}", "3", "bar_chart")
+
+
+if __name__ == "__main__":
+    main()

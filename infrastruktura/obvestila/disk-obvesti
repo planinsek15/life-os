@@ -1,0 +1,3 @@
+#!/bin/sh
+# smartd -M exec: opozorilo o disku
+/usr/local/bin/obvesti "OPOZORILO: disk strežnika" "${SMARTD_MESSAGE:-smartd je zaznal težavo z diskom} (${SMARTD_DEVICE:-})" 5 warning

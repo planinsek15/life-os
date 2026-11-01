@@ -1,0 +1,7 @@
+[Unit]
+Description=Vsakih 5 minut preveri nove naprave
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+[Install]
+WantedBy=timers.target

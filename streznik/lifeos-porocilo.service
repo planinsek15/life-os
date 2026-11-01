@@ -1,0 +1,17 @@
+[Unit]
+Description=Life OS tedensko Claude poročilo
+After=lifeos.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=lifeos-ai
+Environment=HOME=/var/lib/lifeos-ai
+WorkingDirectory=/var/lib/lifeos-ai
+ExecStart=/usr/local/bin/lifeos-porocilo
+TimeoutStartSec=15min
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/lifeos-ai
+ProtectHome=yes
+PrivateTmp=yes

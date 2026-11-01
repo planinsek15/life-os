@@ -1,0 +1,9 @@
+[Unit]
+Description=Life OS opomnik za zapadle naloge ob 16:00
+
+[Timer]
+OnCalendar=*-*-* 16:00
+Unit=lifeos-opomnik@zapadle.service
+
+[Install]
+WantedBy=timers.target

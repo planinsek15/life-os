@@ -1,0 +1,23 @@
+services:
+  ntfy:
+    image: binwiederhier/ntfy:v2.11.0
+    container_name: ntfy
+    command: serve
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Ljubljana
+    volumes:
+      - ./server.yml:/etc/ntfy/server.yml:ro
+      - cache:/var/cache/ntfy
+    ports:
+      - "127.0.0.1:8080:80"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -q true"]
+      interval: 60s
+volumes:
+  cache:

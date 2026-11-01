@@ -1,0 +1,21 @@
+#!/bin/sh
+# Nočna šifrirana varnostna kopija strežnika "doma" (restic). Namizni jo nato pobere na D:.
+export RESTIC_REPOSITORY=/srv/kopije/restic
+export RESTIC_PASSWORD_FILE=/root/.restic-geslo
+LOG=/var/log/kopija.log
+napaka() { /usr/local/bin/obvesti "NAPAKA: varnostna kopija" "$1 (podrobnosti: /var/log/kopija.log)" 5 x; exit 1; }
+{
+  echo "=== $(date '+%F %T') začetek"
+  restic backup --one-file-system --tag nocna \
+    /etc /opt /home/david /var/lib/nove-naprave /var/lib/docker/volumes /usr/local/bin \
+    --exclude /home/david/.cache || exit 1
+  restic forget --tag nocna --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune || exit 2
+  # 1. v mesecu: preveri 10 % podatkov
+  [ "$(date +%d)" = "01" ] && { restic check --read-data-subset=10% || exit 3; }
+  echo "=== $(date '+%F %T') konec OK"
+} >>"$LOG" 2>&1
+rc=$?
+[ $rc -eq 0 ] || napaka "Kopija ni uspela (koda $rc)"
+# namizni (uporabnik david) mora repozitorij brati, da ga lahko prenese; vsebina je šifrirana
+chown -R david:david /srv/kopije/restic && chmod -R u+rwX,go-rwx /srv/kopije/restic
+date +%s > /srv/kopije/zadnja-uspesna
