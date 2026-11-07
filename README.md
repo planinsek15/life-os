@@ -112,8 +112,9 @@ Na kratko:
 3. **Aplikacija na strežnik.** Iz aplikacije, ki je hranila podatke samo v brskalniku, je nastala skupna aplikacija za vse naprave.
 4. **Navade, ne funkcije.** Vsaka nova stvar je morala znižati prag: ena vrstica dnevnika, en klik za poskus, opomnik ob pravem času.
 5. **AI, ki mi da povratno informacijo.** Vsako nedeljo Claude prebere moj teden in napiše: kaj je šlo dobro, kaj izboljšati, en fokus.
+6. **Past AI-ja in vrnitev h korakom.** Pri »enem košu za vse vhode« sem asistentu prepustil vse — šlo je prehitro in izgubil sem pregled. Vrnil sem se na začetek: korak za korakom, **80 % razmisleka moje, 20 % AI**, korake pišem na list in grafe rišem v zvezek. Šlo je počasneje, a prvič je vse delovalo od začetka do konca.
 
-Projekt sem gradil v paru z AI asistentom (**Claude Code**): jaz sem postavljal cilje, odločal in preverjal, AI je pomagal pri kodi, diagnozah in dokumentaciji. To je način dela, ki ga želim prinesti tudi v ekipo.
+Projekt sem gradil v paru z AI asistentom (**Claude Code**): jaz sem postavljal cilje, odločal in preverjal, AI je pomagal pri kodi, diagnozah in dokumentaciji. Naučil sem se, da mora biti AI pomočnik, ne šef: odločitve in pregled ostanejo pri meni. To je način dela, ki ga želim prinesti tudi v ekipo.
 
 ---
 
@@ -124,6 +125,7 @@ Projekt sem gradil v paru z AI asistentom (**Claude Code**): jaz sem postavljal 
 - **Varnost kot privzeto**: nič odprtih vrat na internet, SSH samo s ključem, skrivnosti nikoli v kodi.
 - **Diagnoza strojne opreme**: iskanje pokvarjenih zapisov v Android sistemu, prepoznava odpovedi NAND pomnilnika iz dnevnikov jedra.
 - **Produkt za uporabnika** (tudi če sem to jaz): funkcija, ki je ne uporabljaš, nima vrednosti — zato nizek prag in opomniki.
+- **Delo z AI brez izgube nadzora**: najprej koraki in graf (na papirju), nato en korak naenkrat; avtomatiko delajo navadni programi, AI jih piše in pregleduje.
 
 ---
 

@@ -118,6 +118,33 @@ Kaj se je zgodilo:
 
 ---
 
+## Faza 6 — Past AI-ja: ko gre prehitro (november 2026)
+
+Ko je osnova delovala, sem hotel naslednji korak: **en koš za vse vhode**. Posnetek z iPhona, PDF ali slika pošljem na mail, sistem sam ugotovi, kaj je, in shrani na pravo mesto.
+
+In tu sem padel v **past AI-ja**: vse sem prepustil asistentu. Ta je bil hiter — v eni seji je naredil preizkus štirih modelov za prepis govora, dva načrta arhitekture in ju združil, še preden sem sploh razumel, kaj se dogaja. Na koncu sem imel kup datotek in **nisem več vedel, kje smo**. Hitrost brez mojega razumevanja ni bila napredek, ampak izguba nadzora.
+
+Zato sem se ustavil in **vrnil na začetek**:
+
+- **Korak za korakom.** Najprej mi AI našteje korake, nato naredimo samo trenutnega. Nič naprej brez mojega »da«.
+- **80 / 20.** 80 % dela je moje: razmislek, odločitve, kaj gre kam in zakaj. 20 % je AI: koda po mojih korakih, preizkusi, zapiski.
+- **Papir in svinčnik.** Korake sem začel pisati na list in **risati grafe v zvezek**. Iz skice je nastal graf toka podatkov, ki je zdaj *edini vir resnice* za sistem — AI ga mora upoštevati, ne obratno.
+
+Kaj je nastalo po tej poti (vsak korak potrjen posebej):
+
+1. **Graf toka**: mail → strežnik (samo sprejme, hrani, prepošlje) → namizni računalnik (obdela in hrani) → kopija na drug disk.
+2. **Shramba po vrstah** (zvok, dokumenti, slike, drugo). Nova kategorija = ena vrstica v nastavitvah, brez spremembe kode.
+3. **Prevzem**: namizni vsakih 15 minut pobere nove datoteke, vsako preveri s prstnim odtisom (sha256) in je nikoli ne prepiše.
+4. **Obvestila samo ob spremembi**, samo med 7. in 21. uro: »shranjeno«, »čaka, ker računalnik ni prižgan«, »mail brez priponke«.
+5. **Mail z besedilom**: prva beseda v zadevi pove, kam gre (dnevnik, naloga, ideja, razgovor). Brez nje dobim obvestilo z gumbi in odločim jaz.
+6. **Kopije**: kopija se na drugem disku samo dopolnjuje — pokvarjen original ne more uničiti dobre kopije.
+
+Vse to so **navadni programi**, ne AI. AI programe napiše in popravlja, sam pa ne vodi dnevne rutine — ker bi se zaciklal in ker hočem sistem, ki ga razumem.
+
+**Kaj sem se naučil:** AI je odličen pomočnik, a slab šef. Ko sem mu prepustil vse, sem izgubil pregled; ko sem prevzel 80 % razmisleka nazaj in korake narisal na papir, je šlo počasneje — in prvič je vse delovalo od začetka do konca.
+
+---
+
 ## Rezultat
 
 - Ena aplikacija na telefonu, računalniku in (nekoč) na steni, s skupnimi podatki.
