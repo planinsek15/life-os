@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LifeOS tok podatkov</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d1d1f;--mute:#6b6b70;--line:#c9c7bf;
+--zvok:#e8f0fe;--zvokb:#3b6fd8;--srv:#fff4e0;--srvb:#d58a00;--nam:#e6f5ea;--namb:#2f8f4e;--odp:#f3e8fd;--odpb:#8a4fd1;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--card:#222226;--ink:#ececf0;--mute:#9a9aa2;--line:#44444a;
+--zvok:#1e2a44;--srv:#3a2d12;--nam:#16301f;--odp:#2c1f3d;}}
+:root[data-theme="dark"]{--bg:#17171a;--card:#222226;--ink:#ececf0;--mute:#9a9aa2;--line:#44444a;--zvok:#1e2a44;--srv:#3a2d12;--nam:#16301f;--odp:#2c1f3d;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,Segoe UI,sans-serif;padding:24px 16px}
+.wrap{max-width:640px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mute);font-size:14px;margin:0 0 24px}
+.box{background:var(--card);border:2px solid var(--line);border-left-width:8px;border-radius:12px;padding:14px 16px}
+.box h2{font-size:17px;margin:0 0 4px;display:flex;gap:8px;align-items:center}
+.box p,.box li{margin:2px 0;font-size:15px}
+.box ul{margin:4px 0 0;padding-left:20px}
+.tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;border:1px solid currentColor;margin-left:auto;white-space:nowrap}
+.zvok{background:var(--zvok);border-left-color:var(--zvokb)}
+.mail{border-left-color:var(--zvokb)}
+.srv{background:var(--srv);border-left-color:var(--srvb)}
+.nam{background:var(--nam);border-left-color:var(--namb)}
+.odp{background:var(--odp);border-left-color:var(--odpb);border-style:dashed}
+.arrow{text-align:center;color:var(--mute);font-size:22px;line-height:1;padding:6px 0}
+.arrow small{display:block;font-size:13px}
+.side{margin:8px 0 0 28px}
+.q{margin-top:28px}
+.q h2{font-size:17px;margin:0 0 8px}
+.q ol{margin:0;padding-left:22px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mute);margin:0 0 20px}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+footer{margin-top:28px;font-size:13px;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>LifeOS – pot podatka</h1>
+<p class="sub">Po Davidovi skici, 7. 11. 2026 · verzija 3 (zgrajeno in preverjeno) · vir resnice: graf-za-ai.md</p>
+<div class="legend">
+<span style="--c:var(--zvokb)">vhod</span>
+<span style="--c:var(--srvb)">strežnik</span>
+<span style="--c:var(--namb)">namizni</span>
+<span style="--c:var(--odpb)">še odprto</span>
+</div>
+
+<div class="box zvok"><h2>📱 Vhod <span class="tag">deluje</span></h2><p>Posnetek, PDF, slika ali besedilo pošlješ na mail. Pri besedilu prva beseda v zadevi pove, kam gre: <b>dnevnik</b>, <b>naloga</b>, <b>ideja</b>, <b>razgovor</b>.</p></div>
+<div class="arrow">↓</div>
+<div class="box mail"><h2>✉️ Mail <span class="tag">deluje</span></h2><p>Koš za vse. Original ostane v Gmailu.</p></div>
+<div class="arrow">↓<small>server bere mail vsakih 15 min</small></div>
+<div class="box srv"><h2>🖥️ Server <span class="tag">deluje</span></h2>
+<ul>
+<li>Prebere mail, ga označi kot prebranega, hrani datoteke.</li>
+<li>Podatkov ne obdeluje (izpiski in opomniki so starejši – odprto).</li>
+<li>Če namizni ni prižgan, hrani pri sebi.</li>
+<li>Obvestila samo ob spremembi, 7–21 h: shranjeno, čaka, zamuja, zapisano, »ne vem, kam spada« (z gumbi), prazen mail.</li>
+<li>Briše po 7 dneh – samo kar je v shrambi in preverjeno na D:. <b>Zaenkrat samo pokaže, kaj bi izbrisal</b>; zares vklopiš ti.</li>
+</ul></div>
+<div class="arrow">↓<small>namizni potegne, ko je prižgan (vsakih 15 min, preveri vsako datoteko)</small></div>
+<div class="box nam"><h2>💻 Namizni – prevzem <span class="tag">deluje</span></h2><p>Datoteke vloži v shrambo, besedilo maila pošlje v aplikacijo.</p></div>
+<div class="side"><div class="arrow" style="text-align:left">↳</div>
+<div class="box nam"><h2>🗂️ Shramba <span class="tag">deluje</span></h2><p>zvok · dokumenti · slike · drugo, po mesecih. Nova kategorija = ena vrstica.</p></div>
+<div class="arrow" style="text-align:left">↳</div>
+<div class="box nam"><h2>📋 Aplikacija <span class="tag">deluje</span></h2><p>Dnevnik, naloge, ideje. Kartica »Nerazvrščeno« za maile brez prve besede.</p></div>
+<div class="arrow" style="text-align:left">↳</div>
+<div class="box odp"><h2>🎙️ Prepis zvoka <span class="tag">potrjeno, še ni</span></h2><p>Posnetek → besedilo na namiznem (grafična kartica), nato prva beseda »V taske …« → naloga.</p></div></div>
+<div class="arrow">⇓</div>
+<div class="box nam"><h2>📁 Mapa E:\LifeOS <span class="tag">deluje</span></h2>
+<p>Aplikacija, prevzem, shramba, finance, kopije, graf. Koda v gitu, osebni podatki ne.</p>
+<p>Mapa E:\Projekti ostane za seznam ali stranske projekte.</p></div>
+<div class="side"><div class="arrow" style="text-align:left">↳</div>
+<div class="box nam"><h2>💾 Backup na D <span class="tag">deluje</span></h2><p>Vsako uro. Shramba se samo dopolnjuje, nikoli prepiše. Zraven je kopija strežnika.</p></div></div>
+<div class="arrow">⇓</div>
+<div class="box odp"><h2>🐳 Docker <span class="tag">odprto</span></h2><p>LifeOS bi tekel v Dockerju, da ga nihče ne pobriše.</p></div>
+
+<div class="q"><h2>Odgovorjeno</h2>
+<ol>
+<li value="1">Kje teče koda: shranjena v gitu E:\LifeOS; teče na strežniku (mail, čakalnica, aplikacija) in na namiznem (prevzem, kopija, finance, AI).</li>
+<li value="3">Prenos: namizni sam potegne prek ssh, strežnik ne odpira poti.</li>
+</ol></div>
+<div class="q"><h2>Odprta vprašanja</h2>
+<ol>
+<li value="2">Docker: da ali ne, in kaj naj zaščiti?</li>
+<li value="4">Brisanje po 7 dneh: nameščeno v suhem načinu – vklop zares čaka tvoj »da«.</li>
+<li value="5">Izpiski, naročnine in opomniki ostanejo na strežniku ali gredo na namizni?</li>
+</ol></div>
+<footer>Spremembe najprej v graf-za-ai.md, nato tukaj.</footer>
+</div>
+</body>
+</html>
